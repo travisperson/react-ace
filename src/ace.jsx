@@ -15,6 +15,7 @@ require('brace/theme/solarized_light');
 //include as many of the libraries
 require('brace/mode/javascript');
 require('brace/mode/java');
+require('brace/mode/c_cpp');
 require('brace/mode/php');
 require('brace/mode/python');
 require('brace/mode/xml');
@@ -32,6 +33,7 @@ require('brace/mode/css');
 
 module.exports = React.createClass({
   editor: undefined,
+  session: undefined,
   propTypes: {
     mode  : React.PropTypes.string,
     theme : React.PropTypes.string,
@@ -44,12 +46,15 @@ module.exports = React.createClass({
     };
   },
   componentDidMount: function() {
+    // Do the inital setup
     this.editor = ace.edit(this.props.name);
-    this.editor.getSession().setMode('ace/mode/'+this.props.mode);
+    this.session = this.editor.getSession();
+    this.session.setMode('ace/mode/'+this.props.mode);
     this.editor.setTheme('ace/theme/'+this.props.theme);
     
+    // Setup the patch system
     if(typeof this.props.onChange == "function") {
-      this.editor.getSession().on('change', function(e) {
+      this.session.on('change', function(e) {
         this.props.onChange(e.data);
       }.bind(this));
     }
@@ -59,8 +64,12 @@ module.exports = React.createClass({
       this.editor.setTheme('ace/theme/'+nextProps.theme);
     }
 
+    if(nextProps.mode != this.props.mode) {
+      this.session.setMode('ace/mode/'+nextProps.mode);
+    }
+
     if(nextProps.patches && nextProps.patches.length > 0) {
-      this.editor.getSession().getDocument().applyDeltas(nextProps.patches);
+      this.session.getDocument().applyDeltas(nextProps.patches);
     }
   },
   render: function() {
