@@ -42,7 +42,8 @@ module.exports = React.createClass({
     return {
       name   : 'brace-editor',
       mode   : 'javascript',
-      theme  : 'monokai'
+      theme  : 'monokai',
+      gutter : true
     };
   },
   componentDidMount: function() {
@@ -51,6 +52,7 @@ module.exports = React.createClass({
     this.session = this.editor.getSession();
     this.session.setMode('ace/mode/'+this.props.mode);
     this.editor.setTheme('ace/theme/'+this.props.theme);
+    this.editor.renderer.setShowGutter(this.props.gutter);
     
     // Setup the patch system
     if(typeof this.props.onChange == "function") {
@@ -70,6 +72,11 @@ module.exports = React.createClass({
 
     if(nextProps.patches && nextProps.patches.length > 0) {
       this.session.getDocument().applyDeltas(nextProps.patches);
+    }
+
+    if(nextProps.gutter != this.props.gutter) {
+      console.log(nextProps.gutter)
+      this.editor.renderer.setShowGutter(nextProps.gutter);
     }
   },
   render: function() {
