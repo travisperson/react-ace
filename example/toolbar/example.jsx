@@ -5,7 +5,8 @@ var ToolBar = React.createClass({
   handleChange: function() {
     this.props.onToolBarChange({
       theme: this.refs.theme.getDOMNode().value,
-      mode: this.refs.mode.getDOMNode().value
+      mode: this.refs.mode.getDOMNode().value,
+      gutter: this.refs.gutter.getDOMNode().checked
     })
   },
   render: function() {
@@ -16,19 +17,20 @@ var ToolBar = React.createClass({
     }.bind(this))
 
     var modes = [];
-    this.props.modes.forEach(function(theme) {
-      var name = theme.charAt(0).toUpperCase() + theme.slice(1);
-      modes.push(<option value={theme}>{name}</option>)
+    this.props.modes.forEach(function(mode) {
+      var name = mode.charAt(0).toUpperCase() + mode.slice(1);
+      modes.push(<option value={mode}>{name}</option>)
     }.bind(this))
 
     return (
       <div>
-        <select ref="theme" onChange={this.handleChange}>
+        <select ref="theme" value={this.props.theme} onChange={this.handleChange}>
           {themes}
         </select>
-        <select ref="mode" onChange={this.handleChange}>
+        <select ref="mode" value={this.props.mode} onChange={this.handleChange}>
           {modes}
         </select>
+        <label htmlFor="editor-gutter"><input ref="gutter" name="editor-gutter" type="checkbox" checked={this.props.gutter} onChange={this.handleChange} />Gutter</label>
       </div>
     )
   }
@@ -39,6 +41,7 @@ var ToolBarEditor = React.createClass({
     return ({
       theme: "github",
       mode: "javascript",
+      gutter: true
     });
   },
   getDefaultProps: function () {
@@ -86,8 +89,8 @@ var ToolBarEditor = React.createClass({
   render: function () {
     return (
       <div>
-        <ToolBar onToolBarChange={this.handleToolBarChange} themes={this.props.themes} modes={this.props.modes}/>
-        <AceEditor theme={this.state.theme} mode={this.state.mode} name="toolbar-editor" height="6em" onChange={this.handlePatch}/>
+        <ToolBar mode={this.state.mode} theme={this.state.theme} onToolBarChange={this.handleToolBarChange} themes={this.props.themes} modes={this.props.modes} gutter={this.state.gutter}/>
+        <AceEditor theme={this.state.theme} mode={this.state.mode} name="toolbar-editor" gutter={this.state.gutter} height="6em" onChange={this.handlePatch}/>
       </div>
     )
   }
