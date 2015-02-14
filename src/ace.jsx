@@ -33,6 +33,8 @@ require('brace/mode/css');
 
 
 module.exports = React.createClass({
+  editor: undefined,
+
   propTypes: {
     mode  : React.PropTypes.string,
     theme : React.PropTypes.string,
@@ -47,9 +49,12 @@ module.exports = React.createClass({
     };
   },
   componentDidMount: function() {
-    var editor = ace.edit(this.props.name);
-    editor.getSession().setMode('ace/mode/'+this.props.mode);
-    editor.setTheme('ace/theme/'+this.props.theme);
+    this.editor = ace.edit(this.props.name);
+    this.editor.getSession().setMode('ace/mode/'+this.props.mode);
+    this.editor.setTheme('ace/theme/'+this.props.theme);
+  },
+  componentWillReceiveProps: function(nextProps) {
+    this.editor.setTheme('ace/theme/'+nextProps.theme);
   },
   render: function() {
     var divStyle = {
