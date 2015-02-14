@@ -21,7 +21,11 @@ gulp.task('build',function() {
 
 gulp.task('example',function() {
   return browserify({
-    entries: ['./example/example.jsx'],
+    entries: [
+    './example/toolbar/example.jsx',
+    './example/simple/example.jsx',
+    './example/copy-editor/example.jsx'
+  ],
     debug: true
   })
   .bundle()

@@ -30,11 +30,8 @@ require('brace/mode/csharp');
 require('brace/mode/coffee');
 require('brace/mode/css');
 
-
-
 module.exports = React.createClass({
   editor: undefined,
-
   propTypes: {
     mode  : React.PropTypes.string,
     theme : React.PropTypes.string,
@@ -43,24 +40,30 @@ module.exports = React.createClass({
     return {
       name   : 'brace-editor',
       mode   : 'javascript',
-      theme  : 'monokai',
-      height : '500px',
-      width  : '500px'
+      theme  : 'monokai'
     };
   },
   componentDidMount: function() {
     this.editor = ace.edit(this.props.name);
     this.editor.getSession().setMode('ace/mode/'+this.props.mode);
     this.editor.setTheme('ace/theme/'+this.props.theme);
+    
+    if(typeof this.props.onChange == "function") {
+      this.editor.getSession().on('change', function(e) {
+        this.props.onChange(e.data);
+      }.bind(this));
+    }
   },
   componentWillReceiveProps: function(nextProps) {
-    this.editor.setTheme('ace/theme/'+nextProps.theme);
+    if(nextProps.theme != this.props.theme) {
+      this.editor.setTheme('ace/theme/'+nextProps.theme);
+    }
+
+    if(nextProps.patches && nextProps.patches.length > 0) {
+      this.editor.getSession().getDocument().applyDeltas(nextProps.patches);
+    }
   },
   render: function() {
-    var divStyle = {
-      width: this.props.width, 
-      height: this.props.height
-    };
-    return (<div id={this.props.name} style={divStyle}></div>);
+    return (<div id={this.props.name}></div>);
   }
 });
