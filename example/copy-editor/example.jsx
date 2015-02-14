@@ -1,43 +1,11 @@
 var React = require('react');
 var AceEditor  = require('../../src/ace.jsx');
 
-var ToolBar = React.createClass({
-  handleChange: function() {
-    this.props.onToolBarChange(
-      this.refs.theme.getDOMNode().value
-    )
-  },
-  render: function() {
-    var options = [];
-    this.props.themes.forEach(function(theme) {
-      var name = theme.charAt(0).toUpperCase() + theme.slice(1);
-      options.push(<option value={theme}>{name}</option>)
-    }.bind(this))
-
-    return (
-      <select ref="theme" onChange={this.handleChange}>
-        {options}
-      </select>
-    )
-  }
-})
-
 var PatchEditor = React.createClass({
-  getInitialState: function() {
-    return ({
-      theme: "github"
-    });
-  },
   getDefaultProps: function () {
     return ({
-      themes: ["github", "monokai"],
       patches: []
     });
-  },
-  handleToolBarChange: function(theme) {
-    this.setState({
-      theme: theme
-    })
   },
   handlePatch: function(patch) {
     if(typeof this.props.handlePatch == "function") {
@@ -47,8 +15,7 @@ var PatchEditor = React.createClass({
   render: function () {
     return (
       <div id={this.props.name}>
-        <ToolBar onToolBarChange={this.handleToolBarChange} themes={this.props.themes}/>
-        <AceEditor mode="javascript" theme={this.state.theme} name={this.props.name + "-editor"} onChange={this.handlePatch} patches={this.props.patches}/>
+        <AceEditor mode="javascript" theme="github" name={this.props.name + "-editor"} onChange={this.handlePatch} patches={this.props.patches}/>
       </div>
     )
   }
